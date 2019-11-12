@@ -7,25 +7,47 @@ import httpContext from 'express-http-context';
 import { authentication, corsOptions } from '@lib/authentication';
 import { requestLogger, errorLogger} from '@lib/logger';
 import indexRouter from 'routes';
+import  { GraphQLServer } from 'graphql-yoga';
+import {log} from 'winston';
 
-const app = express();
+const typeDefs = `
+  type Query {
+    hello(name: String): String!
+  }
+`;
 
+const resolvers = {
+    Query: {
+        hello: (_, { name }) => `Hello ${name || 'World'}`
+    }
+};
+
+const server = new GraphQLServer({
+    typeDefs,
+    resolvers,
+    playground:true
+});
+server.options.endpoint = '/graphql';
+server.options.playground =  '/graphql/playground';
+server.options.port = 4000;
+
+const app = server.express;
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(httpContext.middleware);
-app.use(authentication());
+// app.use(authentication());
 app.use(requestLogger());
 
 app.use('/check', expressHealthCheck());
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
-app.use((req, res, next) => {
-    next(createError(404));
-});
+// app.use((req, res, next) => {
+//     next(createError(404));
+// });
 
 app.use(errorLogger());
 
@@ -50,5 +72,7 @@ app.use((err, req, res, next) => {
 
     res.json(errorResponse);
 });
+
+server.start(()=>console.log('run server'));
 
 module.exports = app;

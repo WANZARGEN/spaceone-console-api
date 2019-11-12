@@ -29,7 +29,9 @@
       "/identity/domain/list",
       "/identity/domain/create",
       "/identity/api-key/create",
-      "/identity/token/issue"
+      "/identity/token/issue",
+      "/graphql",
+      "/playground"
     ]
   },
   "redis": {
