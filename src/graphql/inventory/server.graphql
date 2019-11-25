@@ -1,0 +1,187 @@
+type Timestamp {
+ seconds:String
+    nanos:Int
+}
+
+scalar JSON
+enum ServerStateType {
+    STATE_NONE
+    INSERVICE
+    MAINTENANCE
+    CLOSED
+    DELETED
+}
+enum ProtocolType {
+    tpc
+    udp
+    all
+}
+
+enum DirectionType {
+    inbound
+    outbound
+}
+
+type SecurityGroupRule {
+    port_range_min: Int
+    port_range_max: Int
+    security_group_id: String
+    direction: DirectionType
+    remote_cidr: String
+    protocol: ProtocolType
+    remote_group_id: String
+    security_group_name: String
+}
+
+type Os {
+    os_distro:String
+    os_arch:String
+}
+
+type ServerBase {
+    memory:Int
+    core: Int
+}
+type Compute {
+    created_by_user_id:String
+    instance_id: String
+    keypair: String
+    instance_name: String
+    static_nat: [String]
+    security_groups: [String]
+    security_group_rules: [SecurityGroupRule]
+    instance_type: String
+    image:String
+}
+
+enum PlatformType{
+    AWS
+    AZURE
+    GCP
+}
+
+type Vm {
+    host: String
+    image: String
+    host_vm_id:String
+    vm_id: String
+    vm_name: String
+    platform_type: PlatformType
+}
+
+type ServerData {
+    os:Os
+    base:ServerBase
+    compute:Compute
+    vm:Vm
+}
+
+enum NicType {
+    PHYSICAL
+}
+
+type Nic{
+    mac_address: String
+    device_index: Int
+    device: String
+    nic_type: NicType
+    tags: JSON
+    ip_addresses: [String]
+}
+
+enum DiskType{
+    EBS
+    EFS
+}
+type Disk{
+    device_index: Int
+    device: String
+    device_id: String
+    storage_id: String
+    size: Int
+    tags: JSON
+    disk_type: DiskType
+    volume_id: String
+}
+
+enum ActiveStateType{
+    ACTIVE
+    DEACTIVE
+}
+
+type Region{
+    region_id: String
+    state: ActiveStateType
+    name:String
+    tags: JSON
+    domain_id: String
+    created_at: Timestamp
+    deleted_at: Timestamp
+}
+
+type Zone {
+    id: String
+    name: String
+    state: ActiveStateType
+    tags: JSON
+    region_info: Region
+    domain_id: String
+    created_at:Timestamp
+    deleted_at: String
+}
+
+type Pool {
+    id: String
+    name: String
+    state:ActiveStateType
+    tags: JSON
+    domain_id:String
+    region_info: Region
+    zone_info: Zone
+    created_at: Timestamp
+    deleted_at: Timestamp
+}
+
+
+
+enum ServerType {
+    SERVER_TYPE_NONE
+    BAREMETAL
+    VM
+    HYPERVISOR
+    UNKNOWN
+}
+
+enum ServerOSType {
+    OS_TYPE_NONE
+    LINUX
+    WINDOWS
+}
+
+type Server {
+    id : ID!
+    name: String
+    state: ServerStateType
+    primary_ip_address: [String]
+    ip_addresses: [String]
+    server_type: ServerType
+    os_type: ServerOSType
+    data: ServerData
+    nics: [Nic]
+    disks: [Disk]
+    template_data:  String
+    pool_info: Pool
+    zone_info: Zone
+    region_info: Region
+    project_id: String
+    domain_id: String
+    tags: JSON
+    created_at: Timestamp
+    updated_at: Timestamp
+    deleted_at: Timestamp
+}
+
+type Query{
+    server(id:ID!): Server
+    servers :[Server]
+}

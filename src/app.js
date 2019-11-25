@@ -9,18 +9,7 @@ import { requestLogger, errorLogger} from '@lib/logger';
 import indexRouter from 'routes';
 import  { GraphQLServer } from 'graphql-yoga';
 import {log} from 'winston';
-
-const typeDefs = `
-  type Query {
-    hello(name: String): String!
-  }
-`;
-
-const resolvers = {
-    Query: {
-        hello: (_, { name }) => `Hello ${name || 'World'}`
-    }
-};
+import {typeDefs,resolvers} from './graphql/index';
 
 const server = new GraphQLServer({
     typeDefs,
@@ -74,5 +63,4 @@ app.use((err, req, res, next) => {
 });
 
 server.start(()=>console.log('run server'));
-
 module.exports = app;
