@@ -1,0 +1,45 @@
+{
+  "cors": [
+    "http://*"
+  ],
+  "timeout": {
+    "domainKey": 86400,
+    "refreshToken": 3600
+  },
+  "endpoints": {
+    "identity": {
+      "v1": "localhost:50051"
+    },
+    "repository": {
+      "v1": "localhost:50053"
+    },
+    "secret": {
+      "v1": "localhost:50052"
+    },
+    "inventory": {
+      "v1": "localhost:50055"
+    }
+  },
+  "baseURL": "http://localhost:3000",
+  "routes": {},
+  "authentication": {
+    "exclude": [
+      "/check",
+      "/identity/domain/init",
+      "/identity/domain/list",
+      "/identity/domain/create",
+      "/identity/api-key/create",
+      "/identity/token/issue",
+      "/graphql",
+      "/playground"
+    ]
+  },
+  "redis": {
+  },
+  "logger": {
+    "handlers": [{
+      "type": "console",
+      "level": "debug"
+    }]
+  }
+}
