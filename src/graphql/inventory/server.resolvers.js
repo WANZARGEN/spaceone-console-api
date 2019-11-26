@@ -6,9 +6,9 @@ export default {
     Query:{
         servers: () => {
             // debugger;
-            const result = listServers({domain_id});
-            return  result;
-            // return arrayOf(casual.integer(1, 3), casual._server);
+            // const result = listServers({domain_id});
+            // return  result;
+            return arrayOf(casual.integer(1, 3), casual._server);
         },
         server: (_) => {
             return casual.server;

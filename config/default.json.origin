@@ -8,16 +8,16 @@
   },
   "endpoints": {
     "identity": {
-      "v1": "localhost:60051"
+      "v1": "identity:50051"
     },
     "repository": {
-      "v1": "localhost:60053"
+      "v1": "repository:50051"
     },
     "secret": {
-      "v1": "localhost:60052"
+      "v1": "secret:50051"
     },
     "inventory": {
-      "v1": "localhost:60055"
+      "v1": "inventory:50051"
     }
   },
   "baseURL": "http://localhost:3000",

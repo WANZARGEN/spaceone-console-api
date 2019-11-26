@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(httpContext.middleware);
-// app.use(authentication());
+app.use(authentication());
 app.use(requestLogger());
 
 app.use('/check', expressHealthCheck());
