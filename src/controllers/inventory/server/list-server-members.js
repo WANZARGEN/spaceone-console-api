@@ -1,6 +1,7 @@
 import grpcClient from '@lib/grpc-client';
-import { pageItems } from '@lib/utils';
+import { changeQueryKeyword, pageItems } from '@lib/utils';
 import serviceClient from '@lib/service-client';
+import _ from 'lodash';
 import logger from '@lib/logger';
 
 const getServerReference = async (servers, domain_id) => {
@@ -16,26 +17,26 @@ const getServerReference = async (servers, domain_id) => {
             filter: [{
                 key: 'server_id',
                 value: servers,
-                option: 'in'
+                operator: 'in'
             }]
         },
         domain_id: domain_id
     });
 
     response.results.map((serverInfo) => {
-        if (serverInfo.project_id && servers.indexOf(serverInfo.project_id) < 0) {
+        if (serverInfo.project_id && projects.indexOf(serverInfo.project_id) < 0) {
             projects.push(serverInfo.project_id);
         }
 
-        if (servers.indexOf(serverInfo.region_info.region_id) < 0) {
+        if (regions.indexOf(serverInfo.region_info.region_id) < 0) {
             regions.push(serverInfo.region_info.region_id);
         }
 
-        if (servers.indexOf(serverInfo.zone_info.zone_id) < 0) {
+        if (zones.indexOf(serverInfo.zone_info.zone_id) < 0) {
             zones.push(serverInfo.zone_info.zone_id);
         }
 
-        if (serverInfo.pool_info && servers.indexOf(serverInfo.pool_info.pool_id) < 0) {
+        if (serverInfo.pool_info && pools.indexOf(serverInfo.pool_info.pool_id) < 0) {
             pools.push(serverInfo.pool_info.pool_id);
         }
     });
@@ -59,7 +60,7 @@ const listRegionMembers = async (regions, domain_id, query) => {
             query: query
         });
 
-        results.concat(response.results);
+        Array.prototype.push.apply(results, response.results);
     });
     await Promise.all(promises);
 
@@ -77,7 +78,7 @@ const listZoneMembers = async (zones, domain_id, query) => {
             query: query
         });
 
-        results.concat(response.results);
+        Array.prototype.push.apply(results, response.results);
     });
     await Promise.all(promises);
 
@@ -95,30 +96,46 @@ const listPoolMembers = async (pools, domain_id, query) => {
             query: query
         });
 
-        results.concat(response.results);
+        Array.prototype.push.apply(results, response.results);
     });
     await Promise.all(promises);
 
     return results;
 };
 
-const listProjectMembers = async (project_id, domain_id, query) => {
-    if (project_id) {
-        try {
-            let identityClient = serviceClient.get('identity');
-            let response = await identityClient.post('/identity/project/member/list', {
-                project_id: project_id,
-                domain_id: domain_id,
-                query: query
-            });
+const listProjectMembers = async (projects, domain_id, query) => {
+    let identityClient = serviceClient.get('identity');
+    let existProjects = [];
+    let results = [];
 
-            return response.data.results;
-        } catch (e) {
-            serviceClient.errorHandler(e);
+    let projectResponse = await identityClient.post('/identity/project/list', {
+        domain_id: domain_id,
+        query: {
+            minimal: true,
+            filter: [{
+                key: 'project_id',
+                value: projects,
+                operator: 'in'
+            }]
         }
-    } else {
-        return [];
-    }
+    });
+
+    projectResponse.data.results.map((projectInfo) => {
+        existProjects.push(projectInfo.project_id);
+    });
+
+    let promises = existProjects.map(async (project_id) => {
+        let response = await identityClient.post('/identity/project/member/list', {
+            project_id: project_id,
+            domain_id: domain_id,
+            query: query
+        });
+
+        Array.prototype.push.apply(results, response.data.results);
+    });
+    await Promise.all(promises);
+
+    return results;
 };
 
 const changeResourceInfo = (items) => {
@@ -148,9 +165,10 @@ const changeResourceInfo = (items) => {
 };
 
 const listServerMembers = async (params) => {
-    let servers = params.server || []
+    let servers = params.servers || []
     let domain_id = params.domain_id;
     let query = params.query || {};
+    changeQueryKeyword(query, ['user_id', 'name']);
     let response = {
         results: []
     };
@@ -159,16 +177,16 @@ const listServerMembers = async (params) => {
         let serverRefer = await getServerReference(servers, domain_id);
         Array.prototype.push.apply(
             response.results,
-            await listProjectMembers(serverRefer.projects, domain_id, query));
+            await listProjectMembers(serverRefer.projects, domain_id, _.cloneDeep(query)));
         Array.prototype.push.apply(
             response.results,
-            await listRegionMembers(serverRefer.regions, domain_id, query));
+            await listRegionMembers(serverRefer.regions, domain_id, _.cloneDeep(query)));
         Array.prototype.push.apply(
             response.results,
-            await listZoneMembers(serverRefer.zones, domain_id, query));
+            await listZoneMembers(serverRefer.zones, domain_id, _.cloneDeep(query)));
         Array.prototype.push.apply(
             response.results,
-            await listPoolMembers(serverRefer.pools, domain_id, query));
+            await listPoolMembers(serverRefer.pools, domain_id, _.cloneDeep(query)));
 
         changeResourceInfo(response.results);
 
