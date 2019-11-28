@@ -30,8 +30,7 @@
       "/identity/domain/create",
       "/identity/api-key/create",
       "/identity/token/issue",
-      "/graphql",
-      "/playground"
+      "/graphql/playground"
     ]
   },
   "redis": {

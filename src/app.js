@@ -14,6 +14,9 @@ import {typeDefs,resolvers} from './graphql/index';
 const server = new GraphQLServer({
     typeDefs,
     resolvers,
+    context:({request, response, connection })=>{
+        return {request};
+    },
     playground:true
 });
 server.options.endpoint = '/graphql';
