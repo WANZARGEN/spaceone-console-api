@@ -17,3 +17,7 @@ dist
 .idea
 *.swp
 *.bak
+
+schema.graphql
+
+.graphqlconfig

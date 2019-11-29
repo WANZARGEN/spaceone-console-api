@@ -1,0 +1,182 @@
+fragment timestamp on Timestamp{
+    nanos
+    seconds
+}
+fragment region on Region{
+    region_id
+    state
+    name
+    tags
+    domain_id
+    created_at{
+        ...timestamp
+    }
+    deleted_at{
+        ...timestamp
+    }
+}
+fragment SecurityGroupRule on SecurityGroupRule  {
+    port_range_min
+    port_range_max
+    security_group_id
+    direction
+    remote_cidr
+    protocol
+    remote_group_id
+    security_group_name
+}
+
+fragment Os   on Os{
+    os_distro
+    os_arch
+}
+
+fragment ServerBase on ServerBase  {
+    memory
+    core
+}
+fragment Compute on Compute{
+    created_by_user_id
+    instance_id
+    keypair
+    instance_name
+    static_nat
+    security_groups
+    security_group_rules{
+        ...SecurityGroupRule
+    }
+    instance_type
+    image
+}
+fragment Vm   on Vm{
+    host
+    image
+    host_vm_id
+    vm_id
+    vm_name
+    platform_type
+}
+
+fragment ServerData on ServerData  {
+    os{
+        ...Os
+    }
+    base{
+        ...ServerBase
+    }
+    compute{
+        ...Compute
+    }
+    vm{
+        ...Vm
+    }
+}
+
+fragment IpAddress on IpAddress{
+    ip_address
+    cidr
+    suhnet_id
+}
+fragment Nic on Nic{
+    mac_address
+    device_index
+    device
+    nic_type
+    tags
+    ip_addresses{
+        ...IpAddress
+    }
+}
+
+fragment Disk on Disk {
+    device_index
+    device
+    device_id
+    storage_id
+    size
+    tags
+    disk_type
+    volume_id
+}
+fragment Zone on Zone  {
+    id
+    name
+    state
+    tags
+    region_info{
+        ...region
+    }
+    domain_id
+    created_at{
+        ...timestamp
+    }
+    deleted_at{
+        ...timestamp
+    }
+}
+
+fragment Pool on Pool  {
+    id
+    name
+    state
+    tags
+    domain_id
+    region_info{
+        ...region
+    }
+    zone_info{
+        ...Zone
+    }
+    created_at{
+        ...timestamp
+    }
+    deleted_at{
+        ...timestamp
+    }
+}
+
+query getServers{
+    servers{
+       server_id
+        name
+        state
+        primary_ip_address
+        ip_addresses{
+            ip_address
+            cidr
+            suhnet_id
+        }
+        server_type
+        os_type
+        data{
+            ...ServerData
+        }
+        nics{
+            ...Nic
+        }
+        disks{
+            ...Disk
+        }
+        pool_info{
+           ...Pool
+        }
+        zone_info{
+          ...Zone
+        }
+        region_info{
+            ...region
+        }
+        project_id
+        domain_id
+        tags
+        created_at{
+            ...timestamp
+        }
+        updated_at{
+           ...timestamp
+        }
+        deleted_at{
+           ...timestamp
+        }
+    }
+}

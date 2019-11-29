@@ -12,9 +12,10 @@ enum ServerStateType {
     DELETED
 }
 enum ProtocolType {
-    tpc
+   tcp
     udp
     all
+    icmp
 }
 
 enum DirectionType {
@@ -23,8 +24,8 @@ enum DirectionType {
 }
 
 type SecurityGroupRule {
-    port_range_min: Int
-    port_range_max: Int
+    port_range_min: String
+    port_range_max: String
     security_group_id: String
     direction: DirectionType
     remote_cidr: String
@@ -80,17 +81,22 @@ enum NicType {
     PHYSICAL
 }
 
+type IpAddress{
+    ip_address:String
+    cidr:String
+    suhnet_id:String
+}
 type Nic{
     mac_address: String
     device_index: Int
     device: String
     nic_type: NicType
     tags: JSON
-    ip_addresses: [String]
+    ip_addresses: [IpAddress]
 }
 
 enum DiskType{
-    EBS
+   Ebs
     EFS
 }
 type Disk{
@@ -127,7 +133,7 @@ type Zone {
     region_info: Region
     domain_id: String
     created_at:Timestamp
-    deleted_at: String
+    deleted_at: Timestamp
 }
 
 type Pool {
@@ -159,11 +165,11 @@ enum ServerOSType {
 }
 
 type Server {
-    id : ID!
+    server_id : ID!
     name: String
     state: ServerStateType
-    primary_ip_address: [String]
-    ip_addresses: [String]
+    primary_ip_address: String
+    ip_addresses: [IpAddress]
     server_type: ServerType
     os_type: ServerOSType
     data: ServerData
