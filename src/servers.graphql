@@ -136,7 +136,7 @@ fragment Pool on Pool  {
 }
 
 query getServers{
-    servers{
+    servers(domain_id:"domain-9a817e7aeed7"){
        server_id
         name
         state

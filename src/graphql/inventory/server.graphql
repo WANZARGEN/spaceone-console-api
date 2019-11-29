@@ -189,5 +189,5 @@ type Server {
 
 type Query{
     server(id:ID!): Server
-    servers :[Server]
+    servers(domain_id:ID\) :[Server]
 }
