@@ -29,6 +29,7 @@
     "express-session": "^1.16.1",
     "google-protobuf": "^3.9.0",
     "googleapis": "^41.0.1",
+    "graphql-voyager": "^1.0.0-rc.28",
     "graphql-yoga": "^1.18.3",
     "grpc": "^1.21.1",
     "http-errors": "~1.6.3",

@@ -8,8 +8,8 @@ import { authentication, corsOptions } from '@lib/authentication';
 import { requestLogger, errorLogger} from '@lib/logger';
 import indexRouter from 'routes';
 import  { GraphQLServer } from 'graphql-yoga';
-import {log} from 'winston';
 import {typeDefs,resolvers} from './graphql/index';
+import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
 
 const server = new GraphQLServer({
     typeDefs,
@@ -24,6 +24,7 @@ server.options.playground =  '/graphql/playground';
 server.options.port = 4000;
 
 const app = server.express;
+app.use('/voyager', voyagerMiddleware({ endpointUrl: '/graphql' }));
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

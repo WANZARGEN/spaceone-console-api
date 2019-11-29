@@ -31,7 +31,8 @@
       "/identity/api-key/create",
       "/identity/token/issue",
       "/graphql",
-      "/graphql/playground"
+      "/graphql/playground",
+      "/voyager"
     ]
   },
   "redis": {
