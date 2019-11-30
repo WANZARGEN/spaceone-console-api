@@ -1,6 +1,6 @@
 {
   "cors": [
-    "http://*"
+    "*"
   ],
   "timeout": {
     "domainKey": 86400,
@@ -31,7 +31,6 @@
       "/identity/api-key/create",
       "/identity/token/issue",
       "/graphql/playground",
-      "/graphql",
       "/voyager"
     ]
   },

@@ -1,15 +1,16 @@
 import casual from '../server-model';
-import {arrayOf} from '../casual';
 import {listServers} from '../../controllers/inventory/server';
-import {json} from 'express';
+import {makeGrpcQuery } from '../core/core';
+
 export default {
     Query:{
-        servers: async (a,args,{request},context) => {
-            const result = await listServers(args);
-            return  result.results;
-            // return arrayOf(casual.integer(1, 3), casual._server);
+        servers:  async (parent,args,{request},context) => {
+            console.log('인자값',args);
+            const resp = await listServers(makeGrpcQuery(args));
+            // console.log('result',resp.results);
+            return  resp.results;
         },
-        server: (_) => {
+        server: (parent,args,ctx,info) => {
             return casual.server;
         }
     }

@@ -1,0 +1,6 @@
+
+
+input SortInput {
+    key: String
+    desc: Boolean
+}

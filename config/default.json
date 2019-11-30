@@ -1,6 +1,6 @@
 {
   "cors": [
-    "http://*"
+    "*"
   ],
   "timeout": {
     "domainKey": 86400,
