@@ -38,6 +38,7 @@
     "express-http-context": "^1.2.3",
     "express-list-endpoints": "^5.0.0",
     "faker": "^5.1.0",
+    "formidable": "^2.0.1",
     "get-ssl-certificate": "^2.3.3",
     "google-protobuf": "^3.9.0",
     "googleapis": "^41.0.1",

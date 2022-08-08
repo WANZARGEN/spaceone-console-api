@@ -40,7 +40,8 @@
       "/identity/token/issue",
       "/identity/domain/list",
       "/identity/user/get-ip",
-      "/add-ons/excel/download"
+      "/add-ons/excel/download",
+      "/add-ons/file/upload/process"
     ]
   },
   "redis": {
